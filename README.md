@@ -39,14 +39,14 @@ This project was developed as part of a **technical assessment** and focuses on 
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-----|-----------|
-Backend Framework | Django 4.2+, Django Rest Framework |
-Database | PostgreSQL |
-Background Tasks | Celery |
-Message Broker | Redis |
-Data Processing | Pandas, OpenPyXL |
-Containerization | Docker, Docker Compose |
+| Layer             | Technology                         |
+| ----------------- | ---------------------------------- |
+| Backend Framework | Django 4.2+, Django Rest Framework |
+| Database          | PostgreSQL                         |
+| Background Tasks  | Celery                             |
+| Message Broker    | Redis                              |
+| Data Processing   | Pandas, OpenPyXL                   |
+| Containerization  | Docker, Docker Compose             |
 
 ---
 
@@ -72,6 +72,7 @@ assessment/
 ## ⚙️ Installation & Setup
 
 ### Prerequisites
+
 - Docker
 - Docker Compose
 
@@ -88,6 +89,7 @@ docker compose up --build
 ## 🌐 API Access
 
 Base URL:
+
 ```
 http://localhost:8000/
 ```
@@ -96,19 +98,20 @@ http://localhost:8000/
 
 ## 🛣️ API Endpoints
 
-| Method | Endpoint | Description |
-|------|---------|-------------|
-| POST | /api/register | Register a new customer |
-| POST | /api/check-eligibility | Check loan eligibility |
-| POST | /api/create-loan | Create a loan |
-| GET | /api/view-loan/<loan_id> | View loan details |
-| GET | /api/view-loans/<customer_id> | View customer loans |
+| Method | Endpoint                      | Description             |
+| ------ | ----------------------------- | ----------------------- |
+| POST   | /api/register                 | Register a new customer |
+| POST   | /api/check-eligibility        | Check loan eligibility  |
+| POST   | /api/create-loan              | Create a loan           |
+| GET    | /api/view-loan/<loan_id>      | View loan details       |
+| GET    | /api/view-loans/<customer_id> | View customer loans     |
 
 ---
 
 ## 🧠 Credit Logic
 
 ### Credit Score Factors
+
 - EMI payment history
 - Number of past loans
 - Loans in current year
@@ -116,12 +119,12 @@ http://localhost:8000/
 
 ### Approval Rules
 
-| Score | Result |
-|------|-------|
-| > 50 | Approved |
+| Score | Result                         |
+| ----- | ------------------------------ |
+| > 50  | Approved                       |
 | 30–50 | Approved with min 12% interest |
 | 10–30 | Approved with min 16% interest |
-| < 10 | Rejected |
+| < 10  | Rejected                       |
 
 ---
 
