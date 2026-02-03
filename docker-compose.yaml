@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   db:
@@ -9,13 +9,23 @@ services:
       - POSTGRES_DB=django_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d django_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    # Orchestrates the startup: Migrates, Starts Ingestion, then Runs Server
+    command: >
+      sh -c "python manage.py makemigrations api &&
+             python manage.py migrate && 
+             python manage.py shell -c \"from api.tasks import ingest_excel_data; ingest_excel_data.delay()\" && 
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
@@ -29,8 +39,10 @@ services:
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   celery:
     build: .
@@ -46,8 +58,10 @@ services:
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
 volumes:
   postgres_data:

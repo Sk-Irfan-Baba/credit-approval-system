@@ -2,6 +2,7 @@ import pandas as pd
 from celery import shared_task
 from .models import Customer, Loan
 import re
+from django.db import connection
 
 def clean_header(col):
     # Standardizes headers: "Monthly payment" -> "monthly_payment"
@@ -42,7 +43,6 @@ def ingest_excel_data():
                     "loan_amount": float(row["loan_amount"]),
                     "tenure": int(row["tenure"]),
                     "interest_rate": float(row["interest_rate"]),
-                    # MAPPING FIXES BASED ON DIAGNOSIS:
                     "monthly_installment": float(row["monthly_payment"]), 
                     "emis_paid_on_time": int(row["emis_paid_on_time"]),
                     "start_date": row["date_of_approval"], 
@@ -51,5 +51,17 @@ def ingest_excel_data():
             )
         except Customer.DoesNotExist:
             print(f"Skipping loan {row['loan_id']}: Customer {row['customer_id']} not found.")
+
+    # --- ADDITION: AUTO-SYNC SEQUENCES ---
+    # This ensures the DB 'counter' starts AFTER the highest ID we just imported
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT setval(pg_get_serial_sequence('api_customer', 'customer_id'), 
+            (SELECT MAX(customer_id) FROM api_customer));
+        """)
+        cursor.execute("""
+            SELECT setval(pg_get_serial_sequence('api_loan', 'loan_id'), 
+            (SELECT MAX(loan_id) FROM api_loan));
+        """)
             
-    return "Data Ingestion Complete"
+    return "Data Ingestion and Sequence Reset Complete"
