@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Database (if any local sqlite remains)
+*.sqlite3
+
+# Secrets
+.env
+
+# Docker
+.docker_ids
+
+# IDEs
+.vscode/
+.idea/

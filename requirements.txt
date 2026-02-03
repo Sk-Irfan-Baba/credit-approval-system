@@ -1,0 +1,8 @@
+Django>=4.0
+djangorestframework
+psycopg2-binary
+celery
+redis
+python-dotenv
+pandas
+openpyxl
